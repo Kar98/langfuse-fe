@@ -19,13 +19,30 @@
   </head>
   <body>
     <div id="main" style="width: 100%; height: 85vh; overflow: hidden"></div>
+    <script src="login.js"></script>
     <script>
       (async function () {
-        //import * as echarts from "echarts";
-
         var chartDom = document.getElementById("main");
         var myChart = echarts.init(chartDom);
         var option;
+
+        const auth = login();
+        console.log(auth);
+
+        const res = await fetch(
+          "http://localhost:3000/api/public/metrics?query={%0A%20%20%22view%22%3A%20%22traces%22%2C%0A%20%20%22metrics%22%3A%20[{%22measure%22%3A%20%22count%22%2C%20%22aggregation%22%3A%20%22count%22}]%2C%0A%20%20%22dimensions%22%3A%20[{%22field%22%3A%20%22name%22}]%2C%0A%20%20%22filters%22%3A%20[]%2C%0A%20%20%22fromTimestamp%22%3A%20%222025-12-01T00%3A00%3A00Z%22%2C%0A%20%20%22toTimestamp%22%3A%20%222025-12-20T00%3A00%3A00Z%22%0A}",
+          {
+            method: "GET",
+            headers: {
+              Authorization: auth,
+            },
+          }
+        );
+        if (!res.ok) {
+          console.error("failed to get localhost data");
+          return;
+        }
+        console.log("hit localhost");
 
         option = {
           xAxis: {
